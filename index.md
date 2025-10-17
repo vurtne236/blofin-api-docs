@@ -698,11 +698,11 @@ Retrieve tiered margin information for a specific futures position.
 
 #### HTTP Request
 
-`GET /uapi/v1/basic/contract/position_tiers`
+`GET /api/v1/market/contract/position-tiers`
 
 > Request Example:
 ```shell
-GET /uapi/v1/basic/contract/position_tiers?symbol=BTC-USDT&margin_mode=cross
+GET /api/v1/market/contract/position-tiers?symbol=BTC-USDT&margin_mode=cross
 ```
 
 #### Request Parameters
