@@ -654,12 +654,12 @@ instId | String | No | Instrument ID, e.g. `BTC-USDT`
             "instId": "BTC-USDT",
             "baseCurrency": "BTC",
             "quoteCurrency": "USDT",
-            "contractValue": "0.001",  # Each contract = 0.001 BTC
+            "contractValue": "0.001",
             "listTime": "1638333031000",
             "expireTime": "1704124800000",
             "maxLeverage": "125",
-            "minSize": "0.1",  # Minimum order size is 0.1 contracts
-            "lotSize": "0.1",  # Contract size increment
+            "minSize": "0.1",
+            "lotSize": "0.1",
             "tickSize": "0.5",
             "instType": "SWAP",
             "contractType": "linear",
