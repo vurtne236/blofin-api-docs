@@ -586,6 +586,43 @@ The API endpoints of `Public Data` do not require authentication.
 
 ## REST API
 
+### GET SystemTime
+
+
+Get System Time.
+
+#### HTTP Request
+
+`GET 1. /api/v1/market/time`
+
+> Request Example:
+```shell
+https://openapi.blofin.com/api/v1/market/time
+```
+
+#### Request Parameters
+
+Parameter | Type | Required | Description
+----------------- | ----- | ------- | -----------
+
+> Response Example:
+
+```json
+{
+  "code": "0",
+  "msg": "success",
+  "data": {
+    "ts": "1760670711503"
+  }
+}
+```
+
+#### Response Parameters
+Parameter | Type   | Description
+--------- |--------| -----------
+ts | Number | System Time.
+
+
 ### GET Instruments
 
 
@@ -654,6 +691,60 @@ maxLimitSize | String | The maximum order quantity of the limit order
 maxMarketSize | String | The maximum order quantity of the market order
 state | String | Instrument status<br>`live`<br>`suspend`
 settleCurrency | String | Settlement and margin currency, e.g. `BTC`
+
+### GET Position Margin Tiers
+
+Retrieve tiered margin information for a specific futures position.
+
+#### HTTP Request
+
+`GET /uapi/v1/basic/contract/position_tiers`
+
+> Request Example:
+```shell
+GET /uapi/v1/basic/contract/position_tiers?symbol=BTC-USDT&margin_mode=cross
+```
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|------------|------|-----------|--------------|
+| instId | STRING | Yes | Trading pair, e.g. `BTC-USDT` |
+| marginMode | STRING | Yes | Margin mode: <br>`cross` for cross margin <br>`isolated` for isolated margin |
+
+---
+
+#### Response Parameters
+
+| Parameter | Type   | Description |
+|------------|--------|--------------|
+| symbol | STRING | Trading pair name |
+| marginMode | STRING | Margin mode: `cross` or `isolated` |
+| minQuantity | Number | Minimum position size (contracts) |
+| maxQuantity | Number    | Maximum position size (contracts) |
+| maintenanceMarginRate | STRING | Maintenance margin rate |
+| maxQuantity | Number    | Maximum leverage allowed |
+
+---
+
+#### Response Example
+
+```json
+{
+  "code": "0",
+  "msg": "success",
+  "data": [
+    {
+      "instId": "BTC-USDT",
+      "maintenanceMarginRate": "0.0045",
+      "minQuantity": 0,
+      "maxQuantity": 9998,
+      "marginMode": "cross",
+      "maxLeverage": 450
+    },...
+  ]
+}
+```
 
 
 ### GET Tickers
@@ -2279,6 +2370,103 @@ details | Array | Detailed asset information in all currencies
 `>equityUsd` | String | Equity in USD of the currency
 `>isolatedUnrealizedPnl` | String | Isolated unrealized profit and loss of the currency
 `>bonus` | String | Bonus balance
+
+
+# GET Position History
+
+Retrieve the position history for futures trading.
+
+---
+
+### HTTP Request
+
+`POST /api/v1/account/positions-history`
+
+---
+
+### Request Parameters
+
+| Parameter | Type | Required | Description |
+|------------|------|-----------|--------------|
+| after | STRING | No | Start time |
+| before | STRING | No | End time |
+| posId | STRING | No | Position ID |
+| state | STRING | No | Position state: 1=partiallyClosed, 2=closed, 3=liquidated, 4=partiallyLiquidated, 5=adl |
+| instId | STRING | No | Trading pair symbol |
+| limit | INT | No | Limit the number of records returned (default 200) |
+
+---
+
+### Response Example
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": [
+    {
+      "historyId": "100008",
+      "positionId": "24867",
+      "instId": "BTC-USDT",
+      "instrumentId": "1",
+      "marginMode": "isolated",
+      "state": "2",
+      "createTime": 1724897688220,
+      "updateTime": 1724899233697,
+      "openTime": 1724899233697,
+      "openAveragePrice": "59401.7",
+      "closeAveragePrice": "59401.7",
+      "maxQuantity": "0.2",
+      "maxQuantityCont": "200",
+      "closeQuantity": "0.2",
+      "closeQuantityCont": "200",
+      "tradingFee": "-23.60068",
+      "fundingFee": "0",
+      "closePnl": "80",
+      "realizedPnl": "56.23932",
+      "realizedPnlRatio": "0.04733814015423801",
+      "leverage": 10,
+      "positionSide": "net",
+      "side": "sell",
+      "liquidationQuantity": "111",
+      "liquidationQuantityCont": "111"
+    }
+  ]
+}
+```
+
+---
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|------------|------|--------------|
+| historyId | STRING | Unique position history ID |
+| positionId | STRING | Position ID |
+| instId | STRING | Trading pair symbol |
+| instrumentId | STRING | Instrument ID |
+| marginMode | ENUM | Margin mode: `isolated` or `cross` |
+| state | ENUM | Position state: 1=partiallyClosed, 2=closed, 3=liquidated, 4=partiallyLiquidated, 5=adl |
+| createTime | LONG | Position creation time |
+| updateTime | LONG | Last update time |
+| openTime | LONG | Open time |
+| openAveragePrice | STRING | Average open price |
+| closeAveragePrice | STRING | Average close price |
+| maxQuantity | STRING | Max quantity (coins) |
+| maxQuantityCont | STRING | Max quantity (contracts) |
+| closeQuantity | STRING | Closed quantity (coins) |
+| closeQuantityCont | STRING | Closed quantity (contracts) |
+| tradingFee | STRING | Trading fee amount |
+| fundingFee | STRING | Funding fee |
+| closePnl | STRING | Close profit and loss |
+| realizedPnl | STRING | Realized profit and loss |
+| realizedPnlRatio | STRING | Realized PnL ratio |
+| leverage | INT | Leverage |
+| positionSide | ENUM | Position side: `long`, `short`, or `net` |
+| side | ENUM | Order side: `buy` or `sell` |
+| liquidationQuantity | STRING | Liquidated quantity (coins) |
+| liquidationQuantityCont | STRING | Liquidated quantity (contracts) |
+
 
 ### GET Positions
 
@@ -3979,6 +4167,346 @@ Parameter | Type | Description
 ----------------- | ----- | -----------
 maxPrice | String | Maximum Price
 minPrice | String | Minimum Price
+
+
+### GET Order Info
+
+Retrieve detailed information for a specific order.
+
+---
+
+#### HTTP Request
+
+`GET /api/v1/trade/order-get`
+
+---
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|------------|------|-----------|--------------|
+| instId | STRING | Yes | Trading pair symbol |
+| ordId | STRING | No | System order ID |
+| clOrdId | STRING | No | User-defined order ID |
+
+> Request Example:
+```shell
+GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
+```
+---
+
+#### Response Parameters
+
+| Parameter | Type | Description |
+|------------|------|--------------|
+| ordId | BIGINT | System order ID |
+| clOrdId | STRING | User-defined order ID |
+| instId | STRING | Trading pair symbol |
+| marginMode | ENUM | Margin mode: `cross`, `isolated` |
+| positionSide | ENUM | Position side: `long`, `short`, or `net` |
+| orderSide | ENUM | Order direction: `buy` or `sell` |
+| orderType | ENUM | Order type: `limit`, `market` |
+| price | STRING | Order price |
+| amount | STRING | Order amount |
+| reduceOnly | BOOLEAN | Whether the order is reduce-only |
+| leverage | STRING | Leverage multiplier |
+| feeRate | STRING | Trading fee rate |
+| feeMargin | STRING | Margin used for fee |
+| state | STRING | Order status |
+| filledQuantity | STRING | Filled quantity |
+| filledAmount | STRING | Filled amount |
+| avgPrice | STRING | Average transaction price |
+| fee | STRING | Trading fee |
+| pnl | STRING | Realized PnL |
+| createTime | LONG | Creation timestamp |
+| updateTime | LONG | Update timestamp |
+| contract | STRING | Contract name |
+| tickSize | STRING | Minimum price increment |
+| orderCategory | ENUM | Order category: `unknown`, `liquidation`, `partialLiquidation`, `tp`, `sl` |
+| bankruptPrice | STRING | Bankruptcy price |
+| liquidationBankruptcyPrice | STRING | Liquidation bankruptcy price |
+| liquidationMarkPrice | STRING | Liquidation mark price |
+| cancelSourceReason | STRING | Reason for order cancellation |
+| triggerPriceType | ENUM | Trigger price type: `last`, `mark`, or `index` |
+| tpTriggerPrice | STRING | Take-profit trigger price |
+| tpOrderType | ENUM | Take-profit order type: `limit`, `market` |
+| tpOrderPrice | STRING | Take-profit order price |
+| tpOrderPriceType | ENUM | Take-profit trigger price type: `last`, `mark`, `index` |
+| slTriggerPrice | STRING | Stop-loss trigger price |
+| slOrderType | ENUM | Stop-loss order type: `limit`, `market` |
+| slOrderPrice | STRING | Stop-loss order price |
+| slOrderPriceType | ENUM | Stop-loss trigger price type: `last`, `mark`, `index` |
+| couponCenterFlag | BOOL | Coupon usage flag: `true` = used, `false` = not used |
+| notionalUsd | STRING | Total notional value in USD |
+| filledNotionalUsd | STRING | Filled notional value in USD |
+| currencyType | STRING | Settlement currency type: `usdt` or `usd` |
+
+---
+
+### Example Response
+
+```json
+{
+  "code": "0",
+  "msg": "success",
+  "data": {
+    "currencyType": "usdt",
+    "orderType": "limit",
+    "leverage": 3,
+    "tpSl": null,
+    "orderId": 2000007974619,
+    "avgPrice": "0.000000000000000000",
+    "fee": "0.000000000000000000",
+    "marginMode": "cross",
+    "filledQuantity": "0.000000000000000000",
+    "filledAmount": "0.000000000000000000",
+    "tickSize": "1",
+    "liquidationMarkPrice": "",
+    "filledNotionalUsd": "",
+    "price": "23763.000000000000000000",
+    "liquidationBankruptcyPrice": "",
+    "state": "canceled",
+    "bankruptPrice": "0.000000000000000000",
+    "amount": "23763.000000000000000000",
+    "quantity": "1000.000000000000000000",
+    "clientOrderId": "",
+    "positionSide": "net",
+    "contract": "0.001",
+    "updateTime": 1760603777959,
+    "notionalUsd": "23776.901355",
+    "orderSide": "buy",
+    "pnl": "0",
+    "cancelSourceReason": "Order canceled by user",
+    "instId": "BTC-USDT",
+    "couponCenterFlag": null,
+    "reduceOnly": false,
+    "createTime": 1760584163038,
+    "orderCategory": "unknown"
+  }
+}
+```
+
+
+### POST Amend Order
+
+Modify an existing order.
+
+---
+
+#### HTTP Request
+
+`POST /api/v1/trade/order-ament`
+
+---
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|------------|------|-----------|--------------|
+| ordId | LONG | No | System order ID |
+| clOrdId | STRING | No | User-defined order ID |
+| instId | STRING | Yes | Trading pair symbol |
+| price | STRING | Yes | Order price |
+| quantity | STRING | No | Order quantity |
+| tpSl | OBJECT | No | Take-profit / Stop-loss settings |
+| triggerPriceType | ENUM | Yes | Trigger price type for TP/SL: `last` (latest trade price only supported) |
+| tpTriggerPriceType | ENUM | Yes | Take-profit trigger price type: `last`, `mark`, or `index` |
+| tpTriggerPrice | STRING | No | Take-profit trigger price |
+| tpOrderType | ENUM | No | Take-profit order type: `limit`, `market` |
+| tpOrderPrice | STRING | No | Take-profit order price |
+| slTriggerPriceType | ENUM | Yes | Stop-loss trigger price type: `last`, `mark`, or `index` |
+| slTriggerPrice | STRING | No | Stop-loss trigger price |
+| slOrderType | ENUM | No | Stop-loss order type: `limit`, `market` |
+| slOrderPrice | STRING | No | Stop-loss order price |
+
+> Note: `ordId` and `clOrdId` cannot both be empty. If both are provided, `ordId` takes precedence.
+
+---
+
+#### Request Example
+
+```json
+{
+  "ordId": 300555367,
+  "instId": "BTC-USDT",
+  "quantity": 2,
+  "price": "3",
+  "tpSl": {
+    "triggerPriceType": "last",
+    "tpTriggerPrice": "3001",
+    "tpOrderType": "limit",
+    "tpOrderPrice": "1244",
+    "slTriggerPrice": "0.2",
+    "slOrderType": "limit",
+    "slOrderPrice": "113"
+  }
+}
+```
+
+---
+
+### Response Example
+
+```json
+{
+  "code": "0",
+  "msg": "Order modified",
+  "data": {
+    "msg": "Order modified",
+    "clOrdId": "",
+    "code": 200,
+    "ordId": 2000008003581
+  }
+}
+```
+
+---
+
+### Response Parameters
+
+| Parameter | Type | Description |
+|------------|------|--------------|
+| ordId | LONG | System order ID |
+| clOrdId | STRING | User-defined order ID |
+| code | INT | Response code |
+| msg | STRING | Response message |
+
+---
+
+
+### POST Amend Take-Profit / Stop-Loss Order
+
+Modify an existing Take-Profit or Stop-Loss order.
+
+---
+
+#### HTTP Request
+
+`POST /api/v1/trade/order-tpsl-ament`
+
+---
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|------------|------|-----------|--------------|
+| instId | STRING | Yes | Trading pair symbol |
+| ordId | LONG | No | Stop-loss or take-profit order ID |
+| clOrdId | STRING | No | User-defined order ID |
+| triggerPriceType | ENUM | Yes | Trigger price type: `last` (latest trade price only supported) |
+| tpTriggerPriceType | ENUM | Yes | Take-profit trigger price type: `last`, `mark`, `index` |
+| tpTriggerPrice | STRING | No | Take-profit trigger price |
+| tpOrderType | ENUM | No | Take-profit order type: `limit`, `market` |
+| tpOrderPrice | STRING | No | Take-profit order price |
+| slTriggerPriceType | ENUM | Yes | Stop-loss trigger price type: `last`, `mark`, `index` |
+| slTriggerPrice | STRING | No | Stop-loss trigger price |
+| slOrderType | ENUM | No | Stop-loss order type: `limit`, `market` |
+| slOrderPrice | STRING | No | Stop-loss order price |
+| quantity | STRING | Yes | Order quantity |
+
+> Note: `ordId` and `clOrdId` cannot both be empty. At least one must be provided.
+
+---
+
+#### Request Example
+
+```json
+{
+  "id": "957",
+  "instId": "ADA-USDT",
+  "triggerPriceType": "last",
+  "slTriggerPrice": "10",
+  "slOrderType": "limit",
+  "slOrderPrice": "9",
+  "tpTriggerPrice": "0.01",
+  "tpOrderType": "limit",
+  "tpOrderPrice": "9",
+  "quantity": "11"
+}
+```
+
+---
+
+#### Response Example
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "id": "957",
+    "clOrdId": null,
+    "code": 200,
+    "msg": null
+  }
+}
+```
+
+---
+
+#### Response Parameters
+
+| Parameter | Type | Description |
+|------------|------|--------------|
+| ordId | BIGINT | System order ID |
+| clOrdId | STRING | User-defined order ID |
+| code | INT | Response code (`200` for success) |
+| msg | STRING | Error or success message |
+
+---
+
+
+### POST Amend Trailing Stop Order
+
+Modify an existing trailing stop order.
+
+---
+
+#### HTTP Request
+
+`POST /api/v1/trade/order-algo-tpsl-ament`
+
+---
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|------------|------|-----------|--------------|
+| instId | STRING | Yes | Trading pair symbol |
+| algoId | LONG | No | Trailing stop order ID |
+| clOrdId | STRING | No | User-defined trailing stop order ID |
+| quantity | STRING | No | Order quantity |
+| callbackSpread | STRING | No | Callback price distance |
+| callbackRatio | STRING | No | Callback ratio |
+| activePrice | STRING | No | Activation price — the price at which the trailing stop condition is triggered. When the market price reaches this level, the order activates. The system then calculates the actual trailing stop execution price. If not provided, activation occurs immediately. |
+| algoOrderType | ENUM | Yes | Algo order type. Supported value: `move_order_stop` (Trailing Stop) |
+
+> Note: `algoId` and `clOrdId` cannot both be empty. At least one must be provided.  
+> Only one of `callbackSpread` or `callbackRatio` can be used — if both are provided, `callbackSpread` takes precedence.
+
+---
+
+#### Response Example
+
+```json
+{
+  "data": {
+    "algoId": "1",
+    "clOrdId": "a1"
+  }
+}
+```
+
+---
+
+#### Response Parameters
+
+| Parameter | Type | Description |
+|------------|------|--------------|
+| algoId | STRING | Algo order ID |
+| clOrdId | STRING | User-defined order ID |
+
+---
 
 
 ## WebSocket
