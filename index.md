@@ -712,7 +712,7 @@ GET /api/v1/market/contract/position-tiers?symbol=BTC-USDT&margin_mode=cross
 | instId | STRING | Yes | Trading pair, e.g. `BTC-USDT` |
 | marginMode | STRING | Yes | Margin mode: <br>`cross` for cross margin <br>`isolated` for isolated margin |
 
----
+
 
 #### Response Parameters
 
@@ -725,7 +725,7 @@ GET /api/v1/market/contract/position-tiers?symbol=BTC-USDT&margin_mode=cross
 | maintenanceMarginRate | STRING | Maintenance margin rate |
 | maxQuantity | Number    | Maximum leverage allowed |
 
----
+
 
 #### Response Example
 
@@ -2376,13 +2376,13 @@ details | Array | Detailed asset information in all currencies
 
 Retrieve the position history for futures trading.
 
----
+
 
 ### HTTP Request
 
 `POST /api/v1/account/positions-history`
 
----
+
 
 ### Request Parameters
 
@@ -2395,7 +2395,7 @@ Retrieve the position history for futures trading.
 | instId | STRING | No | Trading pair symbol |
 | limit | INT | No | Limit the number of records returned (default 200) |
 
----
+
 
 ### Response Example
 
@@ -2435,7 +2435,7 @@ Retrieve the position history for futures trading.
 }
 ```
 
----
+
 
 ### Response Parameters
 
@@ -4173,13 +4173,13 @@ minPrice | String | Minimum Price
 
 Retrieve detailed information for a specific order.
 
----
+
 
 #### HTTP Request
 
 `GET /api/v1/trade/order-get`
 
----
+
 
 #### Request Parameters
 
@@ -4193,7 +4193,7 @@ Retrieve detailed information for a specific order.
 ```shell
 GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
 ```
----
+
 
 #### Response Parameters
 
@@ -4241,7 +4241,7 @@ GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
 | filledNotionalUsd | STRING | Filled notional value in USD |
 | currencyType | STRING | Settlement currency type: `usdt` or `usd` |
 
----
+
 
 ### Example Response
 
@@ -4291,13 +4291,13 @@ GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
 
 Modify an existing order.
 
----
+
 
 #### HTTP Request
 
 `POST /api/v1/trade/order-ament`
 
----
+
 
 #### Request Parameters
 
@@ -4321,7 +4321,7 @@ Modify an existing order.
 
 > Note: `ordId` and `clOrdId` cannot both be empty. If both are provided, `ordId` takes precedence.
 
----
+
 
 #### Request Example
 
@@ -4343,7 +4343,7 @@ Modify an existing order.
 }
 ```
 
----
+
 
 ### Response Example
 
@@ -4360,7 +4360,7 @@ Modify an existing order.
 }
 ```
 
----
+
 
 ### Response Parameters
 
@@ -4371,20 +4371,20 @@ Modify an existing order.
 | code | INT | Response code |
 | msg | STRING | Response message |
 
----
+
 
 
 ### POST Amend Take-Profit / Stop-Loss Order
 
 Modify an existing Take-Profit or Stop-Loss order.
 
----
+
 
 #### HTTP Request
 
 `POST /api/v1/trade/order-tpsl-ament`
 
----
+
 
 #### Request Parameters
 
@@ -4406,7 +4406,7 @@ Modify an existing Take-Profit or Stop-Loss order.
 
 > Note: `ordId` and `clOrdId` cannot both be empty. At least one must be provided.
 
----
+
 
 #### Request Example
 
@@ -4425,7 +4425,7 @@ Modify an existing Take-Profit or Stop-Loss order.
 }
 ```
 
----
+
 
 #### Response Example
 
@@ -4442,7 +4442,7 @@ Modify an existing Take-Profit or Stop-Loss order.
 }
 ```
 
----
+
 
 #### Response Parameters
 
@@ -4453,20 +4453,20 @@ Modify an existing Take-Profit or Stop-Loss order.
 | code | INT | Response code (`200` for success) |
 | msg | STRING | Error or success message |
 
----
+
 
 
 ### POST Amend Trailing Stop Order
 
 Modify an existing trailing stop order.
 
----
+
 
 #### HTTP Request
 
 `POST /api/v1/trade/order-algo-tpsl-ament`
 
----
+
 
 #### Request Parameters
 
@@ -4484,7 +4484,7 @@ Modify an existing trailing stop order.
 > Note: `algoId` and `clOrdId` cannot both be empty. At least one must be provided.  
 > Only one of `callbackSpread` or `callbackRatio` can be used — if both are provided, `callbackSpread` takes precedence.
 
----
+
 
 #### Response Example
 
@@ -4497,7 +4497,7 @@ Modify an existing trailing stop order.
 }
 ```
 
----
+
 
 #### Response Parameters
 
@@ -4506,7 +4506,7 @@ Modify an existing trailing stop order.
 | algoId | STRING | Algo order ID |
 | clOrdId | STRING | User-defined order ID |
 
----
+
 
 
 ## WebSocket
