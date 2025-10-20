@@ -2390,7 +2390,7 @@ Retrieve the position history for futures trading.
 |------------|------|-----------|--------------|
 | after | STRING | No | Start time |
 | before | STRING | No | End time |
-| posId | STRING | No | Position ID |
+| positionId | STRING | No | Position ID |
 | state | STRING | No | Position state: 1=partiallyClosed, 2=closed, 3=liquidated, 4=partiallyLiquidated, 5=adl |
 | instId | STRING | No | Trading pair symbol |
 | limit | INT | No | Limit the number of records returned (default 200) |
@@ -4186,12 +4186,12 @@ Retrieve detailed information for a specific order.
 | Parameter | Type | Required | Description |
 |------------|------|-----------|--------------|
 | instId | STRING | Yes | Trading pair symbol |
-| ordId | STRING | No | System order ID |
-| clOrdId | STRING | No | User-defined order ID |
+| orderId | STRING | No | System order ID |
+| clientOrderId | STRING | No | User-defined order ID |
 
 > Request Example:
 ```shell
-GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
+GET /api/v1/trade/order-get?instId=BTC-USDT&orderId=2000007974619
 ```
 
 
@@ -4199,8 +4199,8 @@ GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
 
 | Parameter | Type | Description |
 |------------|------|--------------|
-| ordId | BIGINT | System order ID |
-| clOrdId | STRING | User-defined order ID |
+| orderId | BIGINT | System order ID |
+| clientOrderId | STRING | User-defined order ID |
 | instId | STRING | Trading pair symbol |
 | marginMode | ENUM | Margin mode: `cross`, `isolated` |
 | positionSide | ENUM | Position side: `long`, `short`, or `net` |
@@ -4236,7 +4236,6 @@ GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
 | slOrderType | ENUM | Stop-loss order type: `limit`, `market` |
 | slOrderPrice | STRING | Stop-loss order price |
 | slOrderPriceType | ENUM | Stop-loss trigger price type: `last`, `mark`, `index` |
-| couponCenterFlag | BOOL | Coupon usage flag: `true` = used, `false` = not used |
 | notionalUsd | STRING | Total notional value in USD |
 | filledNotionalUsd | STRING | Filled notional value in USD |
 | currencyType | STRING | Settlement currency type: `usdt` or `usd` |
@@ -4278,7 +4277,6 @@ GET /api/v1/trade/order-get?instId=BTC-USDT&ordId=2000007974619
     "pnl": "0",
     "cancelSourceReason": "Order canceled by user",
     "instId": "BTC-USDT",
-    "couponCenterFlag": null,
     "reduceOnly": false,
     "createTime": 1760584163038,
     "orderCategory": "unknown"
@@ -4295,7 +4293,7 @@ Modify an existing order.
 
 #### HTTP Request
 
-`POST /api/v1/trade/order-ament`
+`POST /api/v1/trade/order-amend`
 
 
 
@@ -4303,8 +4301,8 @@ Modify an existing order.
 
 | Parameter | Type | Required | Description |
 |------------|------|-----------|--------------|
-| ordId | LONG | No | System order ID |
-| clOrdId | STRING | No | User-defined order ID |
+| orderId | LONG | No | System order ID |
+| clientOrderId | STRING | No | User-defined order ID |
 | instId | STRING | Yes | Trading pair symbol |
 | price | STRING | Yes | Order price |
 | quantity | STRING | No | Order quantity |
@@ -4319,7 +4317,7 @@ Modify an existing order.
 | slOrderType | ENUM | No | Stop-loss order type: `limit`, `market` |
 | slOrderPrice | STRING | No | Stop-loss order price |
 
-> Note: `ordId` and `clOrdId` cannot both be empty. If both are provided, `ordId` takes precedence.
+> Note: `orderId` and `clientOrderId` cannot both be empty. If both are provided, `orderId` takes precedence.
 
 
 
@@ -4327,7 +4325,7 @@ Modify an existing order.
 
 ```json
 {
-  "ordId": 300555367,
+  "orderId": 300555367,
   "instId": "BTC-USDT",
   "quantity": 2,
   "price": "3",
@@ -4353,9 +4351,9 @@ Modify an existing order.
   "msg": "Order modified",
   "data": {
     "msg": "Order modified",
-    "clOrdId": "",
+    "clientOrderId": "",
     "code": 200,
-    "ordId": 2000008003581
+    "orderId": 2000008003581
   }
 }
 ```
@@ -4366,8 +4364,8 @@ Modify an existing order.
 
 | Parameter | Type | Description |
 |------------|------|--------------|
-| ordId | LONG | System order ID |
-| clOrdId | STRING | User-defined order ID |
+| orderId | LONG | System order ID |
+| clientOrderId | STRING | User-defined order ID |
 | code | INT | Response code |
 | msg | STRING | Response message |
 
@@ -4382,7 +4380,7 @@ Modify an existing Take-Profit or Stop-Loss order.
 
 #### HTTP Request
 
-`POST /api/v1/trade/order-tpsl-ament`
+`POST /api/v1/trade/order-tpsl-amend`
 
 
 
@@ -4391,8 +4389,8 @@ Modify an existing Take-Profit or Stop-Loss order.
 | Parameter | Type | Required | Description |
 |------------|------|-----------|--------------|
 | instId | STRING | Yes | Trading pair symbol |
-| ordId | LONG | No | Stop-loss or take-profit order ID |
-| clOrdId | STRING | No | User-defined order ID |
+| orderId | LONG | No | Stop-loss or take-profit order ID |
+| clientOrderId | STRING | No | User-defined order ID |
 | triggerPriceType | ENUM | Yes | Trigger price type: `last` (latest trade price only supported) |
 | tpTriggerPriceType | ENUM | Yes | Take-profit trigger price type: `last`, `mark`, `index` |
 | tpTriggerPrice | STRING | No | Take-profit trigger price |
@@ -4404,7 +4402,7 @@ Modify an existing Take-Profit or Stop-Loss order.
 | slOrderPrice | STRING | No | Stop-loss order price |
 | quantity | STRING | Yes | Order quantity |
 
-> Note: `ordId` and `clOrdId` cannot both be empty. At least one must be provided.
+> Note: `orderId` and `clientOrderId` cannot both be empty. At least one must be provided.
 
 
 
@@ -4435,7 +4433,7 @@ Modify an existing Take-Profit or Stop-Loss order.
   "msg": "success",
   "data": {
     "id": "957",
-    "clOrdId": null,
+    "clientOrderId": null,
     "code": 200,
     "msg": null
   }
@@ -4448,8 +4446,8 @@ Modify an existing Take-Profit or Stop-Loss order.
 
 | Parameter | Type | Description |
 |------------|------|--------------|
-| ordId | BIGINT | System order ID |
-| clOrdId | STRING | User-defined order ID |
+| orderId | BIGINT | System order ID |
+| clientOrderId | STRING | User-defined order ID |
 | code | INT | Response code (`200` for success) |
 | msg | STRING | Error or success message |
 
@@ -4464,7 +4462,7 @@ Modify an existing trailing stop order.
 
 #### HTTP Request
 
-`POST /api/v1/trade/order-algo-tpsl-ament`
+`POST /api/v1/trade/order-algo-tpsl-amend`
 
 
 
@@ -4474,14 +4472,14 @@ Modify an existing trailing stop order.
 |------------|------|-----------|--------------|
 | instId | STRING | Yes | Trading pair symbol |
 | algoId | LONG | No | Trailing stop order ID |
-| clOrdId | STRING | No | User-defined trailing stop order ID |
+| clientOrderId | STRING | No | User-defined trailing stop order ID |
 | quantity | STRING | No | Order quantity |
 | callbackSpread | STRING | No | Callback price distance |
 | callbackRatio | STRING | No | Callback ratio |
 | activePrice | STRING | No | Activation price — the price at which the trailing stop condition is triggered. When the market price reaches this level, the order activates. The system then calculates the actual trailing stop execution price. If not provided, activation occurs immediately. |
 | algoOrderType | ENUM | Yes | Algo order type. Supported value: `move_order_stop` (Trailing Stop) |
 
-> Note: `algoId` and `clOrdId` cannot both be empty. At least one must be provided.  
+> Note: `algoId` and `clientOrderId` cannot both be empty. At least one must be provided.  
 > Only one of `callbackSpread` or `callbackRatio` can be used — if both are provided, `callbackSpread` takes precedence.
 
 
@@ -4492,7 +4490,7 @@ Modify an existing trailing stop order.
 {
   "data": {
     "algoId": "1",
-    "clOrdId": "a1"
+    "clientOrderId": "a1"
   }
 }
 ```
@@ -4504,7 +4502,7 @@ Modify an existing trailing stop order.
 | Parameter | Type | Description |
 |------------|------|--------------|
 | algoId | STRING | Algo order ID |
-| clOrdId | STRING | User-defined order ID |
+| clientOrderId | STRING | User-defined order ID |
 
 
 
